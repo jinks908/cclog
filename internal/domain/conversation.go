@@ -19,6 +19,7 @@ type Message struct {
 	Timestamp     time.Time   `json:"timestamp"`
 	RequestID     string      `json:"requestId,omitempty"`
 	ToolUseResult interface{} `json:"toolUseResult,omitempty"`
+	CustomTitle   string      `json:"customTitle,omitempty"`
 }
 
 // ConversationLog represents a collection of messages from a JSONL file

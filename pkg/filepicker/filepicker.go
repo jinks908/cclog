@@ -178,8 +178,11 @@ func extractConversationInfo(filePath string) (string, string) {
 		return "", ""
 	}
 
-	// Extract title using existing title extraction logic
-	title := domain.ExtractTitle(filteredLog)
+	// Prefer a user-assigned custom title (dropped by filtering, so read from the raw log)
+	title := domain.ExtractCustomTitle(log)
+	if title == "" {
+		title = domain.ExtractTitle(filteredLog)
+	}
 	return title, projectName
 }
 

@@ -228,6 +228,14 @@ func TestExtractConversationInfo_WithSummaryFirst(t *testing.T) {
 			expectedProject: "tdt",
 		},
 		{
+			name: "should prefer latest custom title over first user message",
+			jsonlContent: `{"type":"user","message":{"role":"user","content":"Hello"},"cwd":"/Users/annenpolka/junks/cclog","uuid":"test","timestamp":"2025-07-06T05:01:44.663Z"}
+{"type":"custom-title","customTitle":"old-name","sessionId":"fb1bb50f-bead-4c77-a1bc-a2d7e4f2fa0e"}
+{"type":"custom-title","customTitle":"My-custom-title","sessionId":"fb1bb50f-bead-4c77-a1bc-a2d7e4f2fa0e"}`,
+			expectedTitle:   "My-custom-title",
+			expectedProject: "cclog",
+		},
+		{
 			name: "should handle file with only summary messages",
 			jsonlContent: `{"type":"summary","summary":"Only summary","leafUuid":"test-uuid"}
 {"type":"summary","summary":"Another summary","leafUuid":"test-uuid2"}`,

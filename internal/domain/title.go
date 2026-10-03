@@ -37,6 +37,19 @@ func ExtractTitle(log *ConversationLog) string {
 	return "Claude Conversation"
 }
 
+// ExtractCustomTitle returns the latest user-assigned title, or "" if none
+func ExtractCustomTitle(log *ConversationLog) string {
+	if log == nil {
+		return ""
+	}
+	for i := len(log.Messages) - 1; i >= 0; i-- {
+		if msg := log.Messages[i]; msg.Type == "custom-title" && msg.CustomTitle != "" {
+			return replaceNewlinesWithSpaces(msg.CustomTitle)
+		}
+	}
+	return ""
+}
+
 // replaceNewlinesWithSpaces replaces all newline characters with spaces
 func replaceNewlinesWithSpaces(title string) string {
 	// Replace various newline combinations with spaces
