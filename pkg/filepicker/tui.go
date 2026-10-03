@@ -260,7 +260,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 				}
 			}
-		case "down", "j":
+		case "down", "l":
 			currentFiles := m.files
 			if m.isSearchMode || m.lastAppliedQuery != "" {
 				currentFiles = m.filteredFiles
