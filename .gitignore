@@ -54,3 +54,6 @@ coverage.html
 
 # Local Go build cache
 .gocache/
+
+# Scratch buffer
+STAGE.md
