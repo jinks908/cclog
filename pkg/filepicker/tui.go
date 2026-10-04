@@ -19,43 +19,52 @@ import (
 
 // Define styles for help text and UI elements
 var (
-	helpKeyStyle       = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "241", Dark: "241"})
-	helpDescStyle      = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "239", Dark: "239"})
-	helpSeparatorStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "237", Dark: "237"})
+	// Keybinding list
+	helpKeyStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#00d7ff")).Bold(true)
+	helpDescStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("#4685ff"))
+	helpSeparatorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4685ff"))
 
 	// File selection and highlighting styles
 	selectedFileStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("15")). // Bright white text
-				Background(lipgloss.Color("33")). // Bright blue background
+                Foreground(lipgloss.Color("#000000")).
+                Background(lipgloss.Color("#00fbee")).
 				Bold(true).
-				Padding(0, 1) // Horizontal padding for better visibility
+				Padding(0, 1)
 
-	// File type specific styles
+	// Normal file style for unselected items
 	normalFileStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.AdaptiveColor{Light: "235", Dark: "250"}) // Adaptive gray
+			Foreground(lipgloss.Color("#7c8dd0"))
 
+	// Directories
 	directoryStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("39")). // Bright blue for directories
-			Bold(true)
+			Foreground(lipgloss.Color("#4da0ff")).
+			Bold(true).
+			Italic(true)
 
+	// JSONL files
 	jsonlFileStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("148")) // Green for JSONL files
+			Foreground(lipgloss.Color("#7c8dd0"))
 
 	// UI element styles
+	// Cursor/selector (chevron)
 	cursorStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("196")). // Bright red cursor
+			Foreground(lipgloss.Color("#00fbee")).
 			Bold(true)
 
+	// Blue header text
 	headerStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("39")). // Blue header text
-			Bold(true)
+			Foreground(lipgloss.Color("#4da0ff")).
+			Bold(true).
+			Italic(true)
 
+	// Mode indicators
 	modeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("226")). // Yellow mode indicators
+			Foreground(lipgloss.Color("#ff668c")).
 			Bold(true)
 
+	// Subtle gray for scroll hints
 	scrollIndicatorStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("240")) // Subtle gray for scroll hints
+				Foreground(lipgloss.Color("#aa71f4"))
 )
 
 type Model struct {
@@ -334,7 +343,7 @@ func (m Model) View() string {
 	// Truncate directory path for narrow terminals
 	dirPath := m.dir
 	if m.terminalWidth > 0 && len(dirPath) > m.terminalWidth-20 { // Reserve space for emoji, modes, and spaces
-		availableWidth := m.terminalWidth - 20 // "📁 " + modes + "..."
+		availableWidth := m.terminalWidth - 20 // " " + modes + "..."
 		if availableWidth > 0 {
 			dirPath = domain.TruncateTitle(dirPath, availableWidth)
 		}
@@ -344,7 +353,7 @@ func (m Model) View() string {
 
 	// 検索モードの場合は検索バーを表示
 	if m.isSearchMode {
-		searchPrompt := "🔍 Search: " + m.searchQuery + "▐"
+		searchPrompt := "󰥨  Search: " + m.searchQuery + "▐"
 		s.WriteString(modeStyle.Render(searchPrompt) + "\n")
 	}
 	s.WriteString("\n")
@@ -435,7 +444,7 @@ func (m Model) View() string {
 			}))
 		} else if m.preview.IsVisible() {
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "↑↓/jk", desc: "move"},
+				{keys: "↑↓/kl", desc: "move"},
 				{keys: "enter", desc: "open"},
 				{keys: "/", desc: "search"},
 				{keys: "p", desc: "preview"},
@@ -449,7 +458,7 @@ func (m Model) View() string {
 			}))
 		} else {
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "↑↓/jk", desc: "move"},
+				{keys: "↑↓/kl", desc: "move"},
 				{keys: "enter", desc: "open"},
 				{keys: "/", desc: "search"},
 				{keys: "p", desc: "preview"},
@@ -474,7 +483,7 @@ func (m Model) View() string {
 		} else if m.preview.IsVisible() {
 			s.WriteString("\n")
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "jk", desc: "move"},
+				{keys: "kl", desc: "move"},
 				{keys: "du", desc: "scroll"},
 				{keys: "gG", desc: "top/bot"},
 				{keys: "p", desc: "preview"},
@@ -486,7 +495,7 @@ func (m Model) View() string {
 		} else {
 			s.WriteString("\n")
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "jk", desc: "move"},
+				{keys: "kl", desc: "move"},
 				{keys: "enter", desc: "open"},
 				{keys: "p", desc: "preview"},
 				{keys: "s", desc: "filter"},
@@ -510,7 +519,7 @@ func (m Model) View() string {
 		} else if m.preview.IsVisible() {
 			s.WriteString("\n")
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "↑↓/jk", desc: "move"},
+				{keys: "↑↓/kl", desc: "move"},
 				{keys: "enter", desc: "open"},
 				{keys: "/", desc: "search"},
 				{keys: "p", desc: "preview"},
@@ -525,7 +534,7 @@ func (m Model) View() string {
 		} else {
 			s.WriteString("\n")
 			s.WriteString(renderHelp([]helpItem{
-				{keys: "↑↓/jk", desc: "move"},
+				{keys: "↑↓/kl", desc: "move"},
 				{keys: "enter", desc: "open"},
 				{keys: "/", desc: "search"},
 				{keys: "p", desc: "preview"},
@@ -1070,7 +1079,7 @@ func (m *Model) handleSearchModeNavigation(direction string) []tea.Cmd {
 		return cmds
 	}
 
-	// Handle navigation based on direction (only up/down, not j/k)
+	// Handle navigation based on direction (only up/down, not k/l)
 	switch direction {
 	case "up":
 		if m.cursor > 0 {
