@@ -17,54 +17,67 @@ import (
 	"golang.org/x/term"
 )
 
-// Define styles for help text and UI elements
+// Theme colors
+const (
+      colorBrightCyan   = lipgloss.Color("#00d7ff")
+      colorAquamarine   = lipgloss.Color("#00fbee")
+      colorAzure   		= lipgloss.Color("#4685ff")
+      colorOcean    	= lipgloss.Color("#4da0ff")
+      colorRaincloud  	= lipgloss.Color("#7c8dd0")
+	  colorSlate 		= lipgloss.Color("#586e98")
+      colorLilac 		= lipgloss.Color("#aa71f4")
+      colorNeonRed   	= lipgloss.Color("#ff668c")
+      colorBlack  		= lipgloss.Color("#000000")
+)
+
+// Styles for TUI elements
 var (
 	// Keybinding list
-	helpKeyStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#00d7ff")).Bold(true)
-	helpDescStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("#4685ff"))
-	helpSeparatorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4685ff"))
+	helpKeyStyle       = lipgloss.NewStyle().Foreground(colorBrightCyan).Bold(true)
+	helpDescStyle      = lipgloss.NewStyle().Foreground(colorAzure)
+	helpSeparatorStyle = lipgloss.NewStyle().Foreground(colorAzure)
 
 	// File selection and highlighting styles
 	selectedFileStyle = lipgloss.NewStyle().
-                Foreground(lipgloss.Color("#000000")).
-                Background(lipgloss.Color("#00fbee")).
+                Foreground(colorBlack).
+                Background(colorAquamarine).
 				Bold(true).
 				Padding(0, 1)
 
 	// Normal file style for unselected items
 	normalFileStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#7c8dd0"))
+			Foreground(colorRaincloud)
 
 	// Directories
 	directoryStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#4da0ff")).
+			Foreground(colorOcean).
 			Bold(true).
 			Italic(true)
 
 	// JSONL files
 	jsonlFileStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#7c8dd0"))
+			Foreground(colorRaincloud)
 
 	// UI element styles
 	// Cursor/selector (chevron)
 	cursorStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#00fbee")).
+			Foreground(colorAquamarine).
 			Bold(true)
 
 	// Blue header text
 	headerStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#4da0ff")).
+			Foreground(colorOcean).
 			Bold(true).
 			Italic(true)
 
 	// Mode indicators
 	modeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#ff668c")).
+			Foreground(colorNeonRed).
 			Bold(true)
 
 	// Subtle gray for scroll hints
 	scrollIndicatorStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#aa71f4"))
+				Foreground(colorLilac)
 )
 
 type Model struct {

@@ -18,13 +18,13 @@ type renderMarkdownMsg string
 type errorMsg error
 
 const (
-	padding = 1
+	padding = 0
 )
 
 // Bubble represents the properties of a code bubble.
 type Bubble struct {
 	Viewport    viewport.Model
-	BorderColor lipgloss.AdaptiveColor
+	BorderColor lipgloss.Color
 	Active      bool
 	Borderless  bool
 	FileName    string
@@ -74,7 +74,7 @@ func renderMarkdownCmd(width int, filename string) tea.Cmd {
 }
 
 // New creates a new instance of markdown.
-func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
+func New(active, borderless bool, borderColor lipgloss.Color) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
 
@@ -110,7 +110,7 @@ func (b *Bubble) SetFileName(filename string) tea.Cmd {
 }
 
 // SetBorderColor sets the current color of the border.
-func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
+func (b *Bubble) SetBorderColor(color lipgloss.Color) {
 	b.BorderColor = color
 }
 

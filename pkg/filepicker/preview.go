@@ -24,7 +24,7 @@ type PreviewModel struct {
 }
 
 func NewPreviewModel() *PreviewModel {
-	borderColor := lipgloss.AdaptiveColor{Light: "#4da0ff", Dark: "#4da0ff"}
+	borderColor := lipgloss.Color(colorOcean)
 	markdownBubble := markdown.New(true, false, borderColor)
 	return &PreviewModel{
 		markdownBubble: markdownBubble,
@@ -166,7 +166,7 @@ func (p *PreviewModel) View() string {
 	if p.content == "" {
 		style := lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#586e98")).
+			BorderForeground(colorSlate).
 			Padding(1)
 		return style.Render("No preview available")
 	}
