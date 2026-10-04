@@ -349,11 +349,11 @@ func (m Model) View() string {
 		}
 	}
 
-	s.WriteString("📁 " + headerStyle.Render(dirPath) + modeStr + "\n")
+	s.WriteString(headerStyle.Render("  ") + headerStyle.Render(dirPath) + modeStr + "\n")
 
 	// 検索モードの場合は検索バーを表示
 	if m.isSearchMode {
-		searchPrompt := "󰥨  Search: " + m.searchQuery + "▐"
+		searchPrompt := "󰥨  Search: " + m.searchQuery + "󰗧"
 		s.WriteString(modeStyle.Render(searchPrompt) + "\n")
 	}
 	s.WriteString("\n")
