@@ -4,6 +4,8 @@ package markdown
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -31,16 +33,20 @@ type Bubble struct {
 
 // RenderMarkdown renders the markdown content with glamour.
 func RenderMarkdown(width int, content string) (string, error) {
-	background := "light"
-
-	if lipgloss.HasDarkBackground() {
-		background = "dark"
+	// Get the home directory to locate the theme file
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
 	}
 
-	r, _ := glamour.NewTermRenderer(
+	r, err := glamour.NewTermRenderer(
 		glamour.WithWordWrap(width),
-		glamour.WithStandardStyle(background),
+		// Use custom markdown theme
+		glamour.WithStylesFromJSONFile(filepath.Join(home, "themes", "cclog_theme.json")),
 	)
+	if err != nil {
+		return "", err
+	}
 
 	out, err := r.Render(content)
 	if err != nil {
