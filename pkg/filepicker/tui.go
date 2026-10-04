@@ -61,7 +61,7 @@ var (
 type Model struct {
 	dir               string
 	files             []FileInfo
-	filteredFiles     []FileInfo // 検索フィルタリング後のファイル
+	filteredFiles     []FileInfo // Files after search filtering
 	cursor            int
 	selected          string
 	recursive         bool
@@ -74,18 +74,18 @@ type Model struct {
 	maxTitleChars     int
 	preview           *PreviewModel
 	enableFiltering   bool
-	isSearchMode      bool          // 検索モードかどうか
-	searchQuery       string        // 検索クエリ
-	lastAppliedQuery  string        // 最後に適用された検索クエリ（フィルタ維持用）
-	searchReboundTime time.Duration // 検索のrebound time
-	searchTimer       *time.Timer   // 検索用タイマー
+	isSearchMode      bool          // Search mode status
+	searchQuery       string        // Search query
+	lastAppliedQuery  string        // Last applied search query (for filter persistence)
+	searchReboundTime time.Duration // Search rebound time
+	searchTimer       *time.Timer   // Search timer
 }
 
 func NewModel(dir string, recursive bool) Model {
 	return Model{
 		dir:               dir,
 		files:             []FileInfo{},
-		filteredFiles:     []FileInfo{}, // 初期は空
+		filteredFiles:     []FileInfo{}, // Initially empty
 		cursor:            0,
 		recursive:         recursive,
 		maxDisplayFiles:   10, // Default limit
@@ -97,11 +97,11 @@ func NewModel(dir string, recursive bool) Model {
 		maxTitleChars:     40,     // Default title character limit
 		preview:           NewPreviewModel(),
 		enableFiltering:   true,                   // Default to filtering enabled
-		isSearchMode:      false,                  // 初期は検索モードではない
-		searchQuery:       "",                     // 初期検索クエリは空
-		lastAppliedQuery:  "",                     // 初期は空
-		searchReboundTime: 300 * time.Millisecond, // デフォルト300ms
-		searchTimer:       nil,                    // 初期はnull
+		isSearchMode:      false,                  // Not in search mode initially
+		searchQuery:       "",                     // Initial search query is empty
+		lastAppliedQuery:  "",                     // Initially empty
+		searchReboundTime: 300 * time.Millisecond, // Default 300ms
+		searchTimer:       nil,                    // Initially null
 	}
 }
 
@@ -131,54 +131,54 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.updatePreviewSize()
 		return m, tea.Batch(cmds...)
 	case tea.KeyMsg:
-		// 検索モードでの特別な処理
+		// Special processing in search mode
 		if m.isSearchMode {
 			switch msg.Type {
 			case tea.KeyEsc:
-				// Escapeで検索モードを終了し、フィルタをクリア
+				// Escape...to exit search mode and clear the filter
 				m.isSearchMode = false
 				m.searchQuery = ""
-				m.lastAppliedQuery = "" // フィルタをクリア
+				m.lastAppliedQuery = "" // Clear filters
 				m.applySearchFilter()
 				return m, tea.Batch(cmds...)
 			case tea.KeyBackspace:
-				// Backspaceで文字を削除（UTF-8ルーン単位）
+				// Backspace/Delete characters (in UTF-8 rune units)
 				if len(m.searchQuery) > 0 {
 					runes := []rune(m.searchQuery)
 					if len(runes) > 0 {
 						m.searchQuery = string(runes[:len(runes)-1])
 					}
-					// rebound timeを適用
+					// Apply rebound time
 					cmds = append(cmds, m.startSearchTimer())
 				}
 				return m, tea.Batch(cmds...)
 			case tea.KeyUp:
-				// 検索モード中でも↑キーでカーソル移動
+				// Move the cursor with the Up arrow key even while in search mode.
 				navCmds := m.handleSearchModeNavigation("up")
 				cmds = append(cmds, navCmds...)
 				return m, tea.Batch(cmds...)
 			case tea.KeyDown:
-				// 検索モード中でも↓キーでカーソル移動
+				// Move the cursor with the Down arrow key even while in search mode.
 				navCmds := m.handleSearchModeNavigation("down")
 				cmds = append(cmds, navCmds...)
 				return m, tea.Batch(cmds...)
 			case tea.KeyEnter:
-				// 検索モードでエンターを押した場合、検索モードを終了してフィルタリング状態を維持
-				// 現在の検索クエリを最後に適用されたクエリとして保存
+				// If Enter is pressed in search mode, exit search mode while maintaining the filtered state
+				// Save the current search query as the last applied query
 				m.lastAppliedQuery = m.searchQuery
 				m.isSearchMode = false
 				m.searchQuery = ""
-				// filteredFilesはそのまま維持してフィルタリング状態を保持
-				// ファイルは開かず、単純に検索モードを終了するだけ
+				// Keep filtered files as is to maintain the filtering state
+				// Do not open the file; simply exit search mode
 				return m, tea.Batch(cmds...)
 			case tea.KeyRunes:
-				// 検索モードでは全ての文字入力を検索クエリに追加
+				// In search mode, all character input is added to the search query.
 				m.searchQuery += string(msg.Runes)
-				// rebound timeを適用
+				// Apply rebound time
 				cmds = append(cmds, m.startSearchTimer())
 				return m, tea.Batch(cmds...)
 			}
-			// 他のキーは無視
+			// Ignore other keys
 			return m, tea.Batch(cmds...)
 		}
 
