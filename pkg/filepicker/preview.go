@@ -8,7 +8,7 @@ import (
 	"github.com/annenpolka/cclog/internal/parser"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/philistino/teacup/markdown"
+	"github.com/jinks908/cclog/pkg/markdown"
 )
 
 type PreviewModel struct {
